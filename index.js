@@ -78,11 +78,24 @@ Make it comprehensive and actionable for product managers, engineers, designers,
 Respond with a well-formatted PRD document.`;
 
     try {
-      const response = await window.claude.complete(prompt);
-      setGeneratedPRD(response);
+      // Replace with your actual API endpoint
+      const response = await fetch('/api/generate-prd', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate PRD');
+      }
+
+      const data = await response.json();
+      setGeneratedPRD(data.prd);
     } catch (error) {
       console.error('Error generating PRD:', error);
-      setGeneratedPRD('Error generating PRD. Please try again.');
+      setGeneratedPRD('Error generating PRD. Please check your API configuration and try again.');
     }
     
     setIsGenerating(false);
@@ -253,6 +266,17 @@ Respond with a well-formatted PRD document.`;
                 </>
               )}
             </button>
+
+            {/* API Configuration Notice */}
+            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+              <div className="flex items-center gap-2">
+                <Settings className="w-4 h-4 text-yellow-600" />
+                <span className="text-sm text-yellow-800 font-medium">API Configuration Required</span>
+              </div>
+              <p className="text-sm text-yellow-700 mt-1">
+                You'll need to set up an API endpoint at <code>/api/generate-prd</code> to connect to your preferred AI service (OpenAI, Anthropic, etc.)
+              </p>
+            </div>
           </div>
 
           <div className="bg-gray-50 rounded-lg p-6">
